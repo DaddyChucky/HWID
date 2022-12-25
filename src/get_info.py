@@ -1,35 +1,76 @@
+__author__      = "DaddyChucky"
+__copyright__   = "MIT, refer to GitHub"
+
+
+### !== IMPORTS ###
 import psutil
 import hashlib
 import numpy as np
+### IMPORTS ==! ###
 
 
+### !== COMMON ###
 def initiate_hash():
+    '''
+    Initiates hashing algorithm (MD5 chosen).
+        Returns:
+            hasher (hashlib._Hash): The Hasher used for further digestion
+    '''
     return hashlib.md5()
 
-
 def digest(hasher, barray: bytearray) -> str:
+    '''
+    Digests a bytearray to a MD5 hash.
+        Parameters:
+            hasher (hashlib._Hash): The Hasher used to digest
+            barray (bytearray):     The bytearray to digest
+        Returns:
+                digested_bytearray (str): The digested bytearray
+    '''
     hasher.update(bytearray(barray))
     return hasher.digest()
 
-
 HASHER = initiate_hash()
+### COMMON ==! ###
 
 
-# CPU
+### !== CPU ###
 def get_physical_cpu_count() -> str:
+    '''
+    Gets physical CPU count.
+    Returns:
+        physical_cpu_count (str): Number of physical CPUs
+    '''
     return str(psutil.cpu_count(False) if psutil.cpu_count(False) else "")
 
 def get_physical_cpu_max_freq() -> str:
+    '''
+    Gets physical CPU max frequency.
+    Returns:
+        physical_cpu_max_freq (str): Physical CPU max frequency
+    '''
     return str(psutil.cpu_freq(False).max if psutil.cpu_freq(False).max else "")
+### CPU ==! ###
 
 
-# MEMORY
+### !== MEMORY ###
 def get_memory_size() -> str:
+    '''
+    Gets physical memory size (in total, used & unused).
+    Returns:
+        memory_size (str): Physical memory size
+    '''
     return str(psutil.virtual_memory().total if psutil.virtual_memory().total else "")
+### MEMORY ==! ###
 
 
-# DISKS
+### !== DISKS ###
 def get_disks() -> str:
+    '''
+    Gets physical memory disks (devices, mountpoints & types).
+    Returns:
+        disks_info (str): Concatenation of devices, mountpoints & fstypes related to memory disks
+    '''
     devices:        set[str] = set()
     mountpoints:    set[str] = set()
     fstypes:        set[str] = set()
@@ -38,10 +79,17 @@ def get_disks() -> str:
         mountpoints.add(disk.mountpoint if disk.mountpoint else "")
         fstypes.add(disk.fstype if disk.fstype else "")
     return "".join(sorted(devices) + sorted(mountpoints) + sorted(fstypes))
+### DISKS ==! ###
 
 
-# NET
-def get_net_connections():
+### !== NET ###
+def get_net_connections() -> str:
+    '''
+    Gets various informations about net connections (fds, families, types, ips & ports).
+    WARNING: For HWID purposes, net connections are variable, and thus should not be used for a static verification.
+    Returns:
+        net_info (str): Concatenation of fds, families, types, ips & ports related to net connections
+    '''
     fds:        dict = dict()
     families:   dict = dict()
     types:      dict = dict()
@@ -77,20 +125,34 @@ def get_net_connections():
         sorted([ip[0]        for ip     in ips.items()      if float(ip[1])     >= float(m_ips)])        +   \
         sorted([port[0]      for port   in ports.items()    if float(port[1])   >= float(m_ports)])
     )
+### NET ==! ###
 
 
-# USER
+### !== USERS ###
 def get_users() -> str:
+    '''
+    Gets OS' users info (names & hosts).
+    Returns:
+        user_info (str): Concatenation of names & hosts related to OS' users
+    '''
     names: set[str] = set()
     hosts: set[str] = set()
     for user in psutil.users():
         names.add(user.name if user.name else "")
         hosts.add(user.host if user.host else "")
     return "".join(sorted(names) + sorted(hosts))
+### USERS ==! ###
 
 
-# HWID
-def get_hwid() -> str:
+### !== HWID ###
+def get_hwid(include_net_connections: bool = False) -> str:
+    '''
+    Gets OS' users info (names & hosts).
+    Parameter:
+        include_net_connections (bool, False by default): Since net connections are variable, net connections could be instanced for dynamic HWID
+    Returns:
+        hwid (str): Digested HWID (static or dynamic depending on include_net_connections)
+    '''
     hwid: str = ""
     try: hwid += get_physical_cpu_count()
     except Exception: pass
@@ -100,10 +162,19 @@ def get_hwid() -> str:
     except Exception: pass
     try: hwid += get_disks()
     except Exception: pass
-    # try: hwid += get_net_connections() // too variable
-    # except Exception: pass
+    if include_net_connections:
+        try: hwid += get_net_connections()
+        except Exception: pass
     try: hwid += get_users()
     except Exception: pass
     return str(digest(HASHER, bytearray(hwid, encoding="utf8")))
+### HWID ==! ###
 
-print(get_hwid())
+
+### !== MAIN ###
+if __name__ == "__main__":
+    print(
+        f"\nYour static HWID token: {get_hwid()} \
+        \nYour dynamic HWID token: {get_hwid(True)}"
+    )
+### MAIN ==! ###
