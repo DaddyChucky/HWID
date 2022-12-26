@@ -3,6 +3,7 @@ __copyright__   = "MIT, refer to GitHub"
 
 
 ### !== IMPORTS ###
+from taste_the_rainbow import *
 import psutil
 import hashlib
 import numpy as np
@@ -173,8 +174,6 @@ def get_hwid(include_net_connections: bool = False) -> str:
 
 ### !== MAIN ###
 if __name__ == "__main__":
-    print(
-        f"\nYour static HWID token: {get_hwid()} \
-        \nYour dynamic HWID token: {get_hwid(True)}"
-    )
+    print_success("STATIC HWID", get_hwid())
+    print_warning("DYNAMIC HWID", get_hwid(True))
 ### MAIN ==! ###
