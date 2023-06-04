@@ -3,7 +3,7 @@
 __title__       = 'taste_the_rainbow.py'
 __doc__         = 'Makes text decoration.'
 __author__      = 'DE LAFONTAINE, Charles.'
-__copyright__   = 'See MIT license description on the GitHub repo. (https://github.com/DaddyChucky/UNIVERSAL_SCRAPER)'
+__copyright__   = 'See MIT license description on the GitHub repo (https://github.com/DaddyChucky/HWID).'
 
 
 ###

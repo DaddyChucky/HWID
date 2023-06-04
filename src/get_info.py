@@ -1,5 +1,12 @@
-__author__      = "DaddyChucky"
-__copyright__   = "MIT, refer to GitHub"
+__title__       = 'taste_the_rainbow.py'
+__doc__         = 'Makes text decoration.'
+__author__      = 'DE LAFONTAINE, Charles.'
+__copyright__   = 'See MIT license description on the GitHub repo (https://github.com/DaddyChucky/HWID).'
+
+
+###
+#   --> GET INFO <--
+###
 
 
 ### !== IMPORTS ###
@@ -11,7 +18,7 @@ import numpy as np
 
 
 ### !== COMMON ###
-def initiate_hash():
+def initiate_hash() -> hashlib._Hash:
     '''
     Initiates hashing algorithm (MD5 chosen).
         Returns:
